@@ -6,6 +6,7 @@ html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: sans-serif;
 }
 
 body {
@@ -33,13 +34,15 @@ body {
   background-color: rgb(71, 89, 115);
   overflow: hidden;
   overflow-y: scroll;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
   /* padding: 20px; */
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   position: relative;
   transition: background-color 0.2s;
 }
 
-#main-contet::-webkit-scrollbar {
+#main-content::-webkit-scrollbar {
   display: none; /* for Chrome, Safari, and Opera */
 }
 

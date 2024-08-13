@@ -8,7 +8,7 @@ const textOptions = [
     "There was a small window with a Tree",
     "Birds started appering on the tree and singing",
     "Each bird itself a Unique Vision",
-    "These are some strange Birds!"
+    "I Thought to myself: These are some strange Birds!"
 ];
 
 scrollableSquare.addEventListener("scroll", () => {

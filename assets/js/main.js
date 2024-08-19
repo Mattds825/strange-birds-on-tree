@@ -4,6 +4,8 @@ const storyText = document.getElementById("story-text");
 const startBtn = document.getElementById("start-btn");
 let currentTextIndex = -1; // Initialize with an invalid index
 let isSoundPlaying = false;
+let glitchEffect = false;
+let isGlitching = false;
 
 const textOptions = [
   "I had a Strange Dream",
@@ -104,13 +106,31 @@ function setDistortion(amount) {
   }
 }
 
+//fuction to add glitch effect
+function addGlitchEffect() {
+  if(!isGlitching){
+    scrollableSquare.style.backgroundColor = "white";
+    setTimeout(() => {
+      console.log("glitching");
+      isGlitching = true;
+      scrollableSquare.style.backgroundColor = "black";
+      hadlingGlitch = false;
+      
+    }, 100);
+    // isGlitching = false;
+    // addGlitchEffect();
+  }
+}
+
 scrollableSquare.addEventListener("scroll", () => {
   const scrollTop = scrollableSquare.scrollTop;
   const scrollHeight =
     scrollableSquare.scrollHeight - scrollableSquare.clientHeight;
 
-  const startColor = { r: 71, g: 89, b: 115 }; // Grayish blue
+  const startColor =  { r: 71, g: 89, b: 115 };// Grayish blue
   const endColor = { r: 135, g: 206, b: 250 }; // Sky blue
+
+  const blackColor = { r: 0, g: 0, b: 0 };
 
   const scrollPercentage = scrollTop / scrollHeight;
 
@@ -143,12 +163,20 @@ scrollableSquare.addEventListener("scroll", () => {
     playSound();
   } else if (scrollPercentage <= 0.25) {
     newTextIndex = 1;
+    glitchEffect = false;
   } else if (scrollPercentage <= 0.5) {
     newTextIndex = 2;
+    glitchEffect = false;
   } else if (scrollPercentage <= 0.75) {
     newTextIndex = 3;
+    glitchEffect = false;
   } else {
     newTextIndex = 4;
+    glitchEffect = false;
+  }
+
+  if (scrollPercentage >= 0.95) {
+    glitchEffect = true;
   }
   // Only update the text if it has changed
   if (newTextIndex !== currentTextIndex) {
@@ -158,6 +186,15 @@ scrollableSquare.addEventListener("scroll", () => {
       storyText.style.opacity = 1; // Fade in
     }, 500); // Match the transition duration
     currentTextIndex = newTextIndex;
+  }
+
+
+  if(glitchEffect){
+    // addGlitchEffect();
+    scrollableSquare.style.animation="glitch 0.2s infinite";
+    console.log("glitching");
+  }else{
+    scrollableSquare.style.animation="none";
   }
 
   //adjust the volume based on scroll percentage

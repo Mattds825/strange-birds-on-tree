@@ -43,6 +43,10 @@ body {
   display: none;
 }
 
+.glitch-bg{
+  animation: glitch 0.5s infinite;
+} 
+
 #main-content::-webkit-scrollbar {
   display: none; /* for Chrome, Safari, and Opera */
 }
@@ -202,4 +206,19 @@ span img {
     transform: translateX(0);
     transform: translateY(0);
   }
+}
+
+
+@keyframes glitch {
+	0% {
+		background-color: black;
+	}
+
+	70% {
+		background-color: rgb(135, 206, 250);
+	}
+
+	100% {
+		background-color: black;
+	}
 }

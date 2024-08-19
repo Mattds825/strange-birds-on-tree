@@ -13,18 +13,24 @@ const textOptions = [
   "I Thought to myself: These are some strange Birds!",
 ];
 
-const player = new Tone.Player({
-  url: "assets/sounds/birds.mp3", // Replace with the path to your MP3 file
-  autostart: false,
-}).toDestination();
 
 startBtn.addEventListener("click", () => {
   startAudioContext();
 });
 
+const player = new Tone.Player({
+  url: "assets/sounds/birds.mp3", // Replace with the path to your MP3 file
+  autostart: false,
+});
+
 //create lowpass filter
-const lowPassFilter = new Tone.Filter(20000, "lowpass").toDestination(); // High frequency by default (not affecting sound)
-player.connect(lowPassFilter);
+const lowPassFilter = new Tone.Filter(20000, "lowpass"); // High frequency by default (not affecting sound)
+const pitchShift = new Tone.PitchShift(); // Create a PitchShift effect with default settings 
+
+// player.connect(lowPassFilter);
+// lowPassFilter.connect(pitchShift);
+
+player.chain(lowPassFilter, pitchShift, Tone.Destination);
 
 // function to start the AudioContext
 async function startAudioContext() {
@@ -51,7 +57,7 @@ function setVolume(volume) {
 // `amount` should be a value between 0 and 100, where 0 is no effect (max frequency) and 100 is full effect (minimum frequency)
 function setLowPassFilter(amount) {
   const maxFrequency = 20000; // Maximum human-audible frequency
-  const minFrequency = 20; // Minimum human-audible frequency
+  const minFrequency = 2000; // Minimum human-audible frequency
   // Clamp the amount between 0 and 100 to avoid invalid values
   amount = Math.max(0, Math.min(amount, 100));
 
@@ -62,6 +68,23 @@ function setLowPassFilter(amount) {
   lowPassFilter.frequency.value = Math.max(minFrequency, Math.min(frequency, maxFrequency));
 }
 
+// Function to set pitch shift based on scroll percentage
+// `value` should be between 0.5 (no shift) and 1 (full shift of -12 semitones)
+function setPitchShift(amount) {
+  amount = Math.max(0, Math.min(amount, 1));
+  console.log("setting pitch shift", amount);
+  // Only apply pitch shift if the value is greater than 0.5
+  if (amount > 0.5) {
+      // Calculate the pitch shift amount based on the value
+      const shiftAmount = -24 * (amount - 0.5) / 0.5; // Maps value from 0 to -12 semitones
+
+      // Set the pitch shift effect
+      pitchShift.pitch = shiftAmount;
+  } else {
+      // No pitch shift if value is 0.5 or less
+      pitchShift.pitch = 0;
+  }
+}
 
 scrollableSquare.addEventListener("scroll", () => {
   const scrollTop = scrollableSquare.scrollTop;
@@ -122,4 +145,5 @@ scrollableSquare.addEventListener("scroll", () => {
   //adjust the volume based on scroll percentage
   setVolume(0.001 + scrollPercentage * 0.9);
   setLowPassFilter(scrollPercentage * 100);
+  setPitchShift(scrollPercentage);
 });

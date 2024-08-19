@@ -18,18 +18,19 @@ startBtn.addEventListener("click", () => {
   startAudioContext();
 });
 
+//create audio player that loads file
 const player = new Tone.Player({
   url: "assets/sounds/birds.mp3", // Replace with the path to your MP3 file
   autostart: false,
 });
 
-//create lowpass filter
+//create effects
 const lowPassFilter = new Tone.Filter(20000, "lowpass"); // High frequency by default (not affecting sound)
 const pitchShift = new Tone.PitchShift(); // Create a PitchShift effect with default settings 
+const distortion = new Tone.Distortion(0); 
+distortion.wet.value = 0; // set the wet value to 0 to start with no distortion
 
-// player.connect(lowPassFilter);
-// lowPassFilter.connect(pitchShift);
-
+//chain the effects to the player
 player.chain(lowPassFilter, pitchShift, Tone.Destination);
 
 // function to start the AudioContext
@@ -83,6 +84,23 @@ function setPitchShift(amount) {
   } else {
       // No pitch shift if value is 0.5 or less
       pitchShift.pitch = 0;
+  }
+}
+
+// Function to set distortion based on a value
+// `value` should be between 0.5 (no distortion) and 1 (maximum distortion)
+function setDistortion(amount) {
+  amount = Math.max(0, Math.min(amount, 1));
+
+  if (amount > 0.5) {
+      // Calculate the distortion amount based on the value
+      const distortionAmount = (amount - 0.5) / 0.5; // Maps value from 0 to 1
+      distortion.distortion = distortionAmount;
+      // Increase the wet value proportionally
+      distortion.wet.value = distortionAmount;
+  } else {
+      distortion.distortion = 0; // No distortion if value is 0.5 or less
+      distortion.wet.value = 0;
   }
 }
 
@@ -146,4 +164,5 @@ scrollableSquare.addEventListener("scroll", () => {
   setVolume(0.001 + scrollPercentage * 0.9);
   setLowPassFilter(scrollPercentage * 100);
   setPitchShift(scrollPercentage);
+  setDistortion(scrollPercentage);
 });
